@@ -1,16 +1,22 @@
 /*
  * Read from a temperature/humidity sensor and a temperature/barometric pressure sensor
  * and publish the results to an MQTT broker.
- * 
+ *
  * Uses a DHT12 temperature/humidity sensor and a MS5637-02BA03 pressure/temperature sensor.
- *  
+ *
  * Dependencies:
  * - BaroSensor library by Angus Gratton (install through Arduino IDE library manager)
  * - DHT12 library by Wemos (download from https://github.com/wemos/WEMOS_DHT12_Arduino_Library )
- * 
+ *
  * Written by Jonathan Oxer for www.superhouse.tv
  * https://github.com/superhouse/HomeSenseBasicOTAFirmware
  */
+
+/*    YOUR LOCAL CONFIGURATION                          */
+#include "config.h"
+/* Nothing below this point should require modification */
+
+// Required libraries
 #include <ESP8266WiFi.h>   // To allow ESP8266 to make WiFi connection
 #include <ESP8266mDNS.h>   // For Arduino OTA updates
 #include <WiFiUdp.h>       // For Arduino OTA updates
@@ -21,19 +27,19 @@
 #include <PubSubClient.h>  // MQTT client
 
 // Set the reporting period in seconds
-int reporting_interval = 5;
+int reporting_interval = REPORTINGINTERVAL;
 unsigned long next_report_time = 0;
 
 // WiFi setup
-const char* ssid        = "";
-const char* password    = "";
-const char* mqtt_broker = "192.168.1.111";
+const char* ssid        = WIFISSID;
+const char* password    = WIFIPASSWORD;
+const char* mqtt_broker = MQTTBROKER;
 
 // Calibration adjustments for sensors
-const float humidity_adjustment =        0.0;
-const float temperature_adjustment =    -3.0;
-const float pressure_adjustment =        0.0;
-const float temperature_2_adjustment =  -3.0;
+const float humidity_adjustment =       HUMIDITYADJUSTMENT;
+const float temperature_adjustment =    TEMPERATUREADJUSTMENT;
+const float pressure_adjustment =       PRESSUREADJUSTMENT;
+const float temperature_2_adjustment =  TEMPERATURE2ADJUSTMENT;
 
 long lastMsg = 0;
 char msg[75];  // General purpose  buffer for MQTT messages
@@ -177,7 +183,7 @@ void setup_ota()
 
   // No authentication by default
   // ArduinoOTA.setPassword((const char *)"123");
-  
+
   ArduinoOTA.onStart([]() {
     Serial.println("Start");
   });
@@ -205,7 +211,7 @@ void setup_ota()
 void loop() {
   // Handle OTA update requests
   ArduinoOTA.handle();
-  
+
   // Always try to keep the connection to the MQTT broker alive
   if (!client.connected()) {
     reconnect();
@@ -226,7 +232,7 @@ void loop() {
       Serial.println(temperature_value);
       dtostrf(temperature_value, 4, 2, msg); // This is because printf didn't seem to work in Arduino
       client.publish(temperature_topic, msg);
-      
+
       Serial.print("Humidity:     ");
       float humidity_value = dht12.humidity + humidity_adjustment;
       Serial.println(humidity_value);
@@ -234,7 +240,7 @@ void loop() {
       dtostrf(humidity_value, 4, 2, msg);
       client.publish(humidity_topic, msg);
     }
-    
+
     // Report values from the barometric pressure sensor
     if (!BaroSensor.isOK()) {
       Serial.print("Baro sensor not Found/OK. Error: ");
@@ -247,7 +253,7 @@ void loop() {
       Serial.println(pressure_value);
       dtostrf(pressure_value, 6, 2, msg);
       client.publish(pressure_topic, msg);
-      
+
       Serial.print("Temperature2: ");
       float temperature_2_value = BaroSensor.getTemperature() + temperature_2_adjustment;
       Serial.println(temperature_2_value);
