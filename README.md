@@ -20,18 +20,18 @@ The startup sequence is:
 
 2. Connect to your specified MQTT broker.
 
-3. Publish a starting message to the topic "events" of the form:--
-  "Device esp-XXXXXX starting up"--
+3. Publish a starting message to the topic "events" of the form:  
+  "Device esp-XXXXXX starting up"  
 where "XXXXXX" is the unique ID of the device.
 
 4. Periodically publish sensor readings to topics of the form:
-  device/XXXXXX/temperature--
-  device/XXXXXX/humidity--
-  device/XXXXXX/pressure--
-  device/XXXXXX/temperature2--
+  device/XXXXXX/temperature  
+  device/XXXXXX/humidity  
+  device/XXXXXX/pressure  
+  device/XXXXXX/temperature2  
 
-The device also subscribes to a topic of the form:--
-  device/XXXXXX/command--
+The device also subscribes to a topic of the form:  
+  device/XXXXXX/command  
 so that it can process commands sent to it. However, the current
 version doesn't currently act on any commands so it simply echos them
 to the serial console for debugging.
