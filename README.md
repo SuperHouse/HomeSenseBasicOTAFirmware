@@ -24,11 +24,11 @@ The startup sequence is:
   "Device esp-XXXXXX starting up"  
 where "XXXXXX" is the unique ID of the device.
 
-4. Periodically publish sensor readings to topics of the form:
-  device/XXXXXX/temperature  
-  device/XXXXXX/humidity  
-  device/XXXXXX/pressure  
-  device/XXXXXX/temperature2  
+4. Periodically publish sensor readings to topics of the form:  
+  device/XXXXXX/temperature (Degrees C from DHT12)  
+  device/XXXXXX/humidity (% relative humidity from DHT12)  
+  device/XXXXXX/pressure (millibars of pressure, ie: kPa x 10, from MS5637-02BA03)  
+  device/XXXXXX/temperature2 (Degrees C from MS5637-02BA03)
 
 The device also subscribes to a topic of the form:  
   device/XXXXXX/command  
