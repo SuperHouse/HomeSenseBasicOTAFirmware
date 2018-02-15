@@ -63,7 +63,22 @@ void setup() {
   Serial.begin(115200);
   Serial.println();
   Serial.println("=====================================");
-  Serial.println("Starting up HomeSense Basic OTA v1.0");
+  Serial.println("Starting up HomeSense Basic OTA v1.1");
+
+  // Check and report on the flash memory on this board
+  uint32_t realSize = ESP.getFlashChipRealSize();
+  uint32_t ideSize = ESP.getFlashChipSize();
+  FlashMode_t ideMode = ESP.getFlashChipMode();
+  Serial.printf("Flash real id:   %08X\n", ESP.getFlashChipId());
+  Serial.printf("Flash real size: %u\n", realSize);
+  Serial.printf("Flash ide  size: %u\n", ideSize);
+  Serial.printf("Flash ide speed: %u\n", ESP.getFlashChipSpeed());
+  Serial.printf("Flash ide mode:  %s\n", (ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT" : ideMode == FM_DIO ? "DIO" : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
+  if(ideSize != realSize) {
+    Serial.println("Flash Chip configuration wrong!\n");
+  } else {
+    Serial.println("Flash Chip configuration ok.\n");
+  }
 
   // We need a unique device ID for our MQTT client connection
   device_id = String(ESP.getChipId(), HEX);  // Get the unique ID of the ESP8266 chip in hex
